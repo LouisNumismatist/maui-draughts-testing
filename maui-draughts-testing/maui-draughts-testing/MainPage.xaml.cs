@@ -1,25 +1,28 @@
-﻿namespace maui_draughts_testing
+﻿using Microsoft.Maui.Controls;
+
+namespace maui_draughts_testing
 {
   public partial class MainPage : ContentPage
   {
-    int count = 0;
+    private DraughtsViewModel _viewModel;
 
     public MainPage()
     {
       InitializeComponent();
+      _viewModel = new DraughtsViewModel();
+      BindingContext = _viewModel;
     }
 
-    private void OnCounterClicked(object sender, EventArgs e)
+    private void OnTapped(object sender, TappedEventArgs e)
     {
-      count++;
+      if (e.GetPosition((View)sender) is Point touchPoint)
+      {
+        int row = (int)(touchPoint.Y / 50);
+        int col = (int)(touchPoint.X / 50);
 
-      if (count == 1)
-        CounterBtn.Text = $"Clicked {count} time";
-      else
-        CounterBtn.Text = $"Clicked {count} times";
-
-      SemanticScreenReader.Announce(CounterBtn.Text);
+        _viewModel.ProcessMove(row, col);
+        DraughtsGraphicsView.Invalidate();
+      }
     }
   }
-
 }
